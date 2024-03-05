@@ -2,4 +2,4 @@
 
 ## Monday 03/04/2024 LightHouse Test
 
-![LightHouse Test Monday](../odd-duck/img/lighthouse%20lab%20week3%20monday.PNG)
+![LightHouse Test Monday](../odd-duck/img/lighthouse/lab/week3/monday.PNG)

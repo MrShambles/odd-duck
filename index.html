@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Voting</title>
+    <link rel="stylesheet" href="css/styles.css"> 
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+            gap: 0px 0px;
+            grid-auto-flow: row;
+        }
+        .header { grid-area: 1 / 1 / 2 / 5; }
+        .results { grid-area: 2 / 1 / 5 / 2; }
+        .paragraph { grid-area: 4 / 2 / 5 / 5; }
+        .picture1 { grid-area: 2 / 2 / 4 / 3; }
+        .picture2 { grid-area: 2 / 3 / 4 / 4; }
+        .picture3 { grid-area: 2 / 4 / 4 / 5; }
+        .footer { grid-area: 5 / 1 / 6 / 5; }
+        img {
+            width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">Welcome to the Product Testing!</div>
+    <div class="results">
+      <h2>And the Winner is!!</h2>
+    </div>
+    <div class="paragraph">Welcome! We are conducting a survery testing new products. Here you will see multiple different products that our company has been thinking of launching to the public very soon! You will have 25 rounds for you to decide which items will be placed on a shelf near you! Pick one item per 3 that come up on your screen! At the end of 25 rounds, the results will pop up on the right side of the screen, if you ever want to see results before the end, just click the "View Results" button down below and the current votes will pop up in the results area to the left! Enjoy! </div>
+    <div class="picture1"></div>
+    <div class="picture2"></div>
+    <div class="picture3"></div>
+    <button id="viewResultsBtn">View Results</button>
+    <div class="footer"></div>
+</div>
+
+<script src="js/apps.js"></script> 
+</body>
+</html>

@@ -5,9 +5,13 @@ function Product(name, imagePath) {
   this.timesClicked = 0;
 }
 
-let products = []; 
-let rounds = 25; 
-let currentRound = 0; 
+// Global variables
+let products = []; // Your products array
+let rounds = 25;
+let currentRound = 0;
+let lastShownIndices = []; // Initialize lastShownIndices as an empty array
+
+// Rest of your script...
 
 
 products.push(new Product('Meatball Bubble Gum', 'img/bubblegum.jpg'));
@@ -32,20 +36,33 @@ products.push(new Product('Wine Glass', 'img/wine-glass.jpg'));
 
 function displayThreeProducts() {
   let displayIndexes = [];
-  while (displayIndexes.length < 3) {
+  let attempts = 0; // To prevent infinite loops
+  while (displayIndexes.length < 3 && attempts < 100) {
     let index = Math.floor(Math.random() * products.length);
-    if (!displayIndexes.includes(index)) {
+    // Check if the product was not shown last round and is not already selected for this round
+    if (!lastShownIndices.includes(index) && !displayIndexes.includes(index)) {
       displayIndexes.push(index);
     }
+    attempts++;
   }
 
-  const pictureElements = [document.querySelector('.picture1'), document.querySelector('.picture2'), document.querySelector('.picture3')];
-  displayIndexes.forEach((index, i) => {
-    pictureElements[i].innerHTML = `<img src="${products[index].imagePath}" alt="${products[index].name}" />`;
-    products[index].timesShown++;
-    pictureElements[i].onclick = () => handleProductClick(index);
-  });
+  // Update lastShownIndices for the next round with the newly selected products
+  if (displayIndexes.length === 3) {
+    lastShownIndices = [...displayIndexes];
+
+    displayIndexes.forEach((index, i) => {
+      const pictureElement = document.querySelector(`.picture${i + 1}`);
+      pictureElement.innerHTML = `<img src="${products[index].imagePath}" alt="${products[index].name}" />`;
+      products[index].timesShown++;
+      // Update click handler
+      pictureElement.onclick = () => handleProductClick(index);
+    });
+  } else {
+    console.error("Failed to select 3 unique products after 100 attempts");
+  }
 }
+
+
 
 function handleProductClick(index) {
   products[index].timesClicked++;
@@ -58,22 +75,57 @@ function handleProductClick(index) {
 }
 
 function endVotingSession() {
-  let pictureElements = document.querySelectorAll('.picture, .picture1, .picture2, .picture3');
-  pictureElements.forEach(el => el.onclick = null); 
+  document.querySelectorAll('.picture1, .picture2, .picture3').forEach(el => {
+    el.innerHTML = ''; // Clear the images
+    el.onclick = null; // Remove click handlers
+  });
 
-  displayResults();
+  displayResults(); // Display the results with the chart
 }
 
 function displayResults() {
-  const resultsElement = document.querySelector('.results');
-  resultsElement.innerHTML = products.map(product => `${product.name} had ${product.timesClicked} votes, and was seen ${product.timesShown} times.`).join('<br>');
-  
+  // Assuming you've collected all the necessary data in products array
+  const ctx = document.getElementById('myChart').getContext('2d');
+  const labels = products.map(product => product.name);
+  const votesData = products.map(product => product.timesClicked);
+  const viewsData = products.map(product => product.timesShown);
 
-  let viewResultsBtn = document.createElement('button');
-  viewResultsBtn.textContent = 'View Results';
-  viewResultsBtn.onclick = () => alert(products.map(product => `${product.name} had ${product.timesClicked} votes, and was seen ${product.timesShown} times.`).join('\n'));
-  document.querySelector('.footer').appendChild(viewResultsBtn);
+  if (window.myChart && typeof window.myChart.destroy === 'function') {
+    window.myChart.destroy();
+  }
+
+
+  window.myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '# of Votes',
+        data: votesData,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }, {
+        label: '# of Views',
+        data: viewsData,
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+
+  // Show the results section
+  document.querySelector('.results').style.display = 'block';
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
   displayThreeProducts();
@@ -81,10 +133,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const viewResultsBtn = document.getElementById('viewResultsBtn');
   const resultsElement = document.querySelector('.results');
 
-  
+
   viewResultsBtn.addEventListener('click', () => {
-    
-    let resultsContent = 'And the winner is!<br>'; 
+
+    let resultsContent = 'And the winner is!<br>';
     products.forEach(product => {
       resultsContent += `${product.name} had ${product.timesClicked} votes, and was seen ${product.timesShown} times.<br>`;
     });

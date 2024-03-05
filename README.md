@@ -2,4 +2,4 @@
 
 ## Monday 03/04/2024 LightHouse Test
 
-![LightHouse Test Monday](./img/lighthouse%20lab%20week3%20monday.PNG)
+![LightHouse Test Monday](./img/lighthouselabweek3monday.PNG)

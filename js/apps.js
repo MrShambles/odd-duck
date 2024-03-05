@@ -5,13 +5,13 @@ function Product(name, imagePath) {
   this.timesClicked = 0;
 }
 
-// Global variables
-let products = []; // Your products array
+
+let products = []; 
 let rounds = 25;
 let currentRound = 0;
-let lastShownIndices = []; // Initialize lastShownIndices as an empty array
+let lastShownIndices = []; 
 
-// Rest of your script...
+
 
 
 products.push(new Product('Meatball Bubble Gum', 'img/bubblegum.jpg'));
@@ -36,17 +36,17 @@ products.push(new Product('Wine Glass', 'img/wine-glass.jpg'));
 
 function displayThreeProducts() {
   let displayIndexes = [];
-  let attempts = 0; // To prevent infinite loops
+  let attempts = 0; 
   while (displayIndexes.length < 3 && attempts < 100) {
     let index = Math.floor(Math.random() * products.length);
-    // Check if the product was not shown last round and is not already selected for this round
+    
     if (!lastShownIndices.includes(index) && !displayIndexes.includes(index)) {
       displayIndexes.push(index);
     }
     attempts++;
   }
 
-  // Update lastShownIndices for the next round with the newly selected products
+ 
   if (displayIndexes.length === 3) {
     lastShownIndices = [...displayIndexes];
 
@@ -54,11 +54,11 @@ function displayThreeProducts() {
       const pictureElement = document.querySelector(`.picture${i + 1}`);
       pictureElement.innerHTML = `<img src="${products[index].imagePath}" alt="${products[index].name}" />`;
       products[index].timesShown++;
-      // Update click handler
+      
       pictureElement.onclick = () => handleProductClick(index);
     });
   } else {
-    console.error("Failed to select 3 unique products after 100 attempts");
+    console.error("Failed");
   }
 }
 

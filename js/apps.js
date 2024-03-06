@@ -5,64 +5,74 @@ function Product(name, imagePath) {
   this.timesClicked = 0;
 }
 
-
 let products = []; 
 let rounds = 25;
 let currentRound = 0;
 let lastShownIndices = []; 
 
+function initializeProducts() {
+  let storedProducts = JSON.parse(localStorage.getItem('products'));
+  if (storedProducts) {
+    products = storedProducts.map(product => {
+      let tempProduct = new Product(product.name, product.imagePath);
+      tempProduct.timesShown = product.timesShown;
+      tempProduct.timesClicked = product.timesClicked;
+      return tempProduct;
+    });
+  } else {
+    // Original product initialization
+    products.push(new Product('Meatball Bubble Gum', 'img/bubblegum.jpg'));
+    products.push(new Product('Dragon Meat', 'img/dragon.jpg'));
+    products.push(new Product('Unicorn Meat', 'img/unicorn.jpg'));
+    products.push(new Product('Bag', 'img/bag.jpg'));
+    products.push(new Product('Banana', 'img/banana.jpg'));
+    products.push(new Product('Bathroom', 'img/bathroom.jpg'));
+    products.push(new Product('Boots', 'img/boots.jpg'));
+    products.push(new Product('Breakfast', 'img/breakfast.jpg'));
+    products.push(new Product('Bubblegum', 'img/bubblegum.jpg'));
+    products.push(new Product('Chair', 'img/chair.jpg'));
+    products.push(new Product('Cthulhu', 'img/cthulhu.jpg'));
+    products.push(new Product('Dog Duck', 'img/dog-duck.jpg'));
+    products.push(new Product('Pen', 'img/pen.jpg'));
+    products.push(new Product('Pet Sweep', 'img/pet-sweep.jpg'));
+    products.push(new Product('Scissors', 'img/scissors.jpg'));
+    products.push(new Product('Unicorn Meat', 'img/unicorn.jpg')); // Duplicate removed
+    products.push(new Product('Water Can', 'img/water-can.jpg'));
+    products.push(new Product('Wine Glass', 'img/wine-glass.jpg'));
+  }
+}
 
-
-
-products.push(new Product('Meatball Bubble Gum', 'img/bubblegum.jpg'));
-products.push(new Product('Dragon Meat', 'img/dragon.jpg'));
-products.push(new Product('Unicorn Meat', 'img/unicorn.jpg'));
-products.push(new Product('Bag', 'img/bag.jpg'));
-products.push(new Product('Banana', 'img/banana.jpg'));
-products.push(new Product('Bathroom', 'img/bathroom.jpg'));
-products.push(new Product('Boots', 'img/boots.jpg'));
-products.push(new Product('Breakfast', 'img/breakfast.jpg'));
-products.push(new Product('Bubblegum', 'img/bubblegum.jpg'));
-products.push(new Product('Chair', 'img/chair.jpg'));
-products.push(new Product('Cthulhu', 'img/cthulhu.jpg'));
-products.push(new Product('Dog Duck', 'img/dog-duck.jpg'));
-products.push(new Product('Pen', 'img/pen.jpg'));
-products.push(new Product('Pet Sweep', 'img/pet-sweep.jpg'));
-products.push(new Product('Scissors', 'img/scissors.jpg'));
-products.push(new Product('Unicorn Meat', 'img/unicorn.jpg'));
-products.push(new Product('Water Can', 'img/water-can.jpg'));
-products.push(new Product('Wine Glass', 'img/wine-glass.jpg'));
-
+function saveProductsToLocalStorage() {
+  localStorage.setItem('products', JSON.stringify(products));
+}
 
 function displayThreeProducts() {
   let displayIndexes = [];
-  let attempts = 0; 
+  let attempts = 0;
   while (displayIndexes.length < 3 && attempts < 100) {
     let index = Math.floor(Math.random() * products.length);
-    
+    // Check against both lastShownIndices and displayIndexes to ensure uniqueness
     if (!lastShownIndices.includes(index) && !displayIndexes.includes(index)) {
       displayIndexes.push(index);
     }
     attempts++;
   }
 
- 
   if (displayIndexes.length === 3) {
+    // Update lastShownIndices for the next round
     lastShownIndices = [...displayIndexes];
 
     displayIndexes.forEach((index, i) => {
       const pictureElement = document.querySelector(`.picture${i + 1}`);
       pictureElement.innerHTML = `<img src="${products[index].imagePath}" alt="${products[index].name}" />`;
       products[index].timesShown++;
-      
+      saveProductsToLocalStorage(); // Save each time a product is shown
       pictureElement.onclick = () => handleProductClick(index);
     });
   } else {
-    console.error("Failed");
+    console.error("Failed to display three unique products not shown in the last round");
   }
 }
-
-
 
 function handleProductClick(index) {
   products[index].timesClicked++;
@@ -72,6 +82,7 @@ function handleProductClick(index) {
   } else {
     endVotingSession();
   }
+  saveProductsToLocalStorage(); // Save each time a product is clicked
 }
 
 function endVotingSession() {
@@ -79,12 +90,10 @@ function endVotingSession() {
     el.innerHTML = ''; // Clear the images
     el.onclick = null; // Remove click handlers
   });
-
   displayResults(); // Display the results with the chart
 }
 
 function displayResults() {
-  // Assuming you've collected all the necessary data in products array
   const ctx = document.getElementById('myChart').getContext('2d');
   const labels = products.map(product => product.name);
   const votesData = products.map(product => product.timesClicked);
@@ -93,7 +102,6 @@ function displayResults() {
   if (window.myChart && typeof window.myChart.destroy === 'function') {
     window.myChart.destroy();
   }
-
 
   window.myChart = new Chart(ctx, {
     type: 'bar',
@@ -122,25 +130,21 @@ function displayResults() {
     }
   });
 
-  // Show the results section
   document.querySelector('.results').style.display = 'block';
 }
 
-
 document.addEventListener('DOMContentLoaded', () => {
+  initializeProducts(); // Initialize or retrieve products from local storage
   displayThreeProducts();
-
+  
   const viewResultsBtn = document.getElementById('viewResultsBtn');
   const resultsElement = document.querySelector('.results');
 
-
   viewResultsBtn.addEventListener('click', () => {
-
     let resultsContent = 'And the winner is!<br>';
     products.forEach(product => {
       resultsContent += `${product.name} had ${product.timesClicked} votes, and was seen ${product.timesShown} times.<br>`;
     });
-
 
     resultsElement.innerHTML = resultsContent;
   });

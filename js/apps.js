@@ -51,7 +51,6 @@ function displayThreeProducts() {
   let attempts = 0;
   while (displayIndexes.length < 3 && attempts < 100) {
     let index = Math.floor(Math.random() * products.length);
-    // Check against both lastShownIndices and displayIndexes to ensure uniqueness
     if (!lastShownIndices.includes(index) && !displayIndexes.includes(index)) {
       displayIndexes.push(index);
     }
@@ -59,14 +58,14 @@ function displayThreeProducts() {
   }
 
   if (displayIndexes.length === 3) {
-    // Update lastShownIndices for the next round
+    
     lastShownIndices = [...displayIndexes];
 
     displayIndexes.forEach((index, i) => {
       const pictureElement = document.querySelector(`.picture${i + 1}`);
       pictureElement.innerHTML = `<img src="${products[index].imagePath}" alt="${products[index].name}" />`;
       products[index].timesShown++;
-      saveProductsToLocalStorage(); // Save each time a product is shown
+      saveProductsToLocalStorage(); 
       pictureElement.onclick = () => handleProductClick(index);
     });
   } else {

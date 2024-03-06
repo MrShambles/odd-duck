@@ -7,3 +7,7 @@
 ## Tuesday 03/05/2024 LightHouse Test
 
 ![LightHouse Test](./img/tuesdaylighthouse.PNG)
+
+## Wednesday 03/06/2024 LightHouse Test
+
+![LightHouse Test](./img/lighthousewed.PNG)
